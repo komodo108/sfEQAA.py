@@ -5,21 +5,21 @@ This was made to be part of the **smart finder** software suite.
 
 ## Usage
 ### Programmatic
-`sfEQAA.convert` exports functions that can be used to convert between coordinates easily.
+`sfEQAA` exports functions that can be used to convert between coordinates easily.
 
 To use them within your program, simply install this git repository under your python package manager (we recommend `pipenv`). An example of their usage is given below:
 ```py
-import sfEQAA.convert as convert
+import sfEQAA
 import datetime
 
 if __name__ == "__main__":
-    aa = convert.EQ_AA_loc(0, 0, 0, 0, datetime.datetime.now())
-    print(aa[0])
+    aa = sfEQAA.EQ_AA(0, 0, 0, 0, datetime.datetime.now())
+    print(aa[0]) if aa[1] else print(":(")
 ```
 
 Please note that these functions return a tuple `(value, success)` as there is a problem with comparing to `None` within `astropy`. Therefore to check for success, you should first check if `val[1] == True`, then extract the value: `val = val[0]`.
 
-Please refer to the source for documentation on the other functions
+Remember that `astropy` returns `0 <= az <= 360`, `-90 <= alt <= 90` & `0 <= ra <= 360`, `-90 <= dec <= 90`.
 
 ### Command line
 `sfEQAA.py` can also be used as a command line tool to convert between coordinates.   
@@ -30,3 +30,13 @@ To see the arguments this program needs to recieve, please run the following:
 ```
 pipenv run python sfEQAA.py -h
 ```
+
+## Changelog
+- `1.1` (05/05/2021):
+    - Removed `EQ_AA_loc` & `AA_EQ_loc` in favor of not allowing developers to input their own `EarthLocation` & `Time` objects and instead use the provided helper functions.
+    - Removed unneccessary `convert` submodule, imports are now `import sfEQAA`.
+    - Looked into a bug causing coordinates to be off from those seen in stellarium [see #1](https://github.com/komodo108/sfEQAA.py/issues/1). Will continue investigating.
+    - Updated documentation.
+    - Add changelog.
+    - Add Apache License.
+- `1.0` (23/04/2021): Initial Release

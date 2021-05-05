@@ -1,15 +1,15 @@
 import argparse, sys
 from datetime import datetime
-import sfEQAA.convert as convert
+import sfEQAA
 
-def exit(message, debug):
+def exit(message, debug) -> None:
     """ Exits the program with an error message.
         Additionally informs the user to set the `--debug` flag to get more information """
     print("Error: " + message)
     if(not debug): print("For more information on this error, try setting the --debug flag")
     sys.exit(1)
 
-def parse():
+def parse() -> argparse.Namespace:
     """ Parse command line arguments for `sfEQAA.py` """
     parse = argparse.ArgumentParser(prog="sfEQAA.py", description="Convert between equatorial (ra/dec) and alt-az coordinates")
     parse.add_argument("lat", metavar='latitude', type=float, nargs=1, help="Latitude of the observer (decimal degrees)")
@@ -46,11 +46,11 @@ if __name__ == "__main__":
 
     # Now parse the eq / alt-az arguments & convert using our convertion functions
     if(args.mode == "eq"):
-        aa = convert.EQ_AA_loc(args.ra[0], args.dec[0], args.lat[0], args.long[0], time, debug)
+        aa = sfEQAA.EQ_AA(args.ra[0], args.dec[0], args.lat[0], args.long[0], time, debug)
         if not aa[1]: exit("Couldn't convert from these equatorial coordinates!", debug)
         else: aa = aa[0]
     else:
-        eq = convert.AA_EQ_loc(args.alt[0], args.az[0], args.lat[0], args.long[0], time, debug)
+        eq = sfEQAA.AA_EQ(args.alt[0], args.az[0], args.lat[0], args.long[0], time, debug)
         if not eq[1]: exit("Couldn't convert from these alt-az coordinates!", debug)
         else: eq = eq[0]
 
