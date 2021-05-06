@@ -2,9 +2,9 @@ import astropy.units as u
 from astropy.coordinates import SkyCoord, AltAz, EarthLocation
 from astropy.time import Time
 from typing import Tuple
-import traceback
+import traceback, datetime
 
-def EQ_AA(ra: float, dec: float, lat: float, long: float, time: str, debug = False) -> Tuple[SkyCoord, bool]:
+def EQ_AA(ra: float, dec: float, lat: float, long: float, time: datetime, debug = False) -> Tuple[SkyCoord, bool]:
     """ Convert EQ -> AltAz coordinates without `astropy` objects.
         - `ra` -> Right ascention of the object in degrees.
         - `dec` -> Declination of the object in degrees.
@@ -29,7 +29,7 @@ def EQ_AA(ra: float, dec: float, lat: float, long: float, time: str, debug = Fal
         return (SkyCoord(0, 0, unit='deg'), False) # Cannot use None to detect fault!
 
 
-def AA_EQ(alt: float, az: float, lat: float, long: float, time: str, debug = False) -> Tuple[SkyCoord, bool]:
+def AA_EQ(alt: float, az: float, lat: float, long: float, time: datetime, debug = False) -> Tuple[SkyCoord, bool]:
     """ Convert AltAz -> EQ coordinates without `astropy` objects.
         - `alt` -> Altitude of the object in degrees.
         - `az` -> Azimuth of the object in degrees.
@@ -63,6 +63,6 @@ def _loc_to_astropy(lat: float, long: float, debug = False) -> Tuple[EarthLocati
         return (EarthLocation(0 * u.deg, 0 * u.deg, 0 * u.m), False) # Cannot use None to detect fault!
 
 
-def _time_to_astropy(string) -> Time:
+def _time_to_astropy(time: datetime) -> Time:
     """ Helper function to convert a datetime string ("%Y-%m-%d %H:%M:%S") to an astropy object """
-    return Time(string)
+    return Time(time)

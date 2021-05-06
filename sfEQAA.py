@@ -1,5 +1,5 @@
 import argparse, sys
-from datetime import datetime
+from datetime import datetime, timezone
 import sfEQAA
 
 def exit(message, debug) -> None:
@@ -15,7 +15,7 @@ def parse() -> argparse.Namespace:
     parse.add_argument("lat", metavar='latitude', type=float, nargs=1, help="Latitude of the observer (decimal degrees)")
     parse.add_argument("long", metavar='longitude', type=float, nargs=1, help="Longitude of the observer (decimal degrees)")
     parse.add_argument("date", type=lambda d: datetime.strptime(d, "%d/%m/%Y"), nargs=1, help="Date of the observation (d/m/Y)")
-    parse.add_argument("time", type=lambda t: datetime.strptime(t, "%H:%M:%S"), nargs=1, help="Time of the observation in 24-hour format (H:M:S)")
+    parse.add_argument("time", type=lambda t: datetime.strptime(t, "%H:%M:%S"), nargs=1, help="Time of the observation in 24-hour format (H:M:S) in UTC")
     parse.add_argument("--debug", action='store_true', help="Print out additional error information")
     subsparsers = parse.add_subparsers(dest="mode", help="Mode of operation")
     subsparsers.required = True
@@ -43,6 +43,10 @@ if __name__ == "__main__":
 
     # Need to convert the time back into a string
     time = str(args.date[0].strftime("%Y-%m-%d")) + " " + str(args.time[0].strftime("%H:%M:%S"))
+
+    # Assume the user is in the current timezone of their system, modify the time with this
+    local_timezone = datetime.now().astimezone().tzinfo
+    time = datetime.strptime(time, "%Y-%m-%d %H:%M:%S").astimezone(tz=local_timezone)
 
     # Now parse the eq / alt-az arguments & convert using our convertion functions
     if(args.mode == "eq"):
